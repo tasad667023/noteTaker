@@ -1,6 +1,7 @@
 // Dependencies
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 
 // Sets up the Express App
 const app = express();
@@ -9,6 +10,9 @@ const PORT = 3000;
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static("public"));
+
+const sumOfNotes = [];
 
 // Routes
 // res.send("Welcome to the Index page!")
@@ -21,25 +25,26 @@ app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, './public/notes.html'));
 });
 
-// Create New notes - takes in JSON input
-// app.post('/api/note', (req, res) => {
-    
-//     const newNote = req.body;
-//     newNote.routeName = newNote.name.replace(/\s+/g, '').toLowerCase();
-//     console.log(newNote);
+// GET method for the DB
+app.get('/api/notes', (req, res) => {
+    console.log(res.sendFile(path.join(__dirname, './db/db.json')))
 
-//     notes.push(newNote);
-//     res.json(newNote);
-// });
+    res.sendFile(path.join(__dirname, './db/db.json'));
 
+});
 
-// Setup the /api/notes post route
-app.post("/api/notes", (req, res) => {
-    // Receives a new note, adds it to db.json, then returns the new note
-    let newNote = req.body;
-    notes.push(newNote);
-    updateDb();
-    return console.log("Added new note: "+newNote.title);
+// Create and save notes - takes in JSON input
+app.post('/api/notes', (req, res) => {
+
+    const newNote = req.body;
+    //newNote.routeName = newNote.name.replace(/\s+/g, '').toLowerCase();
+    console.log(newNote);
+    sumOfNotes.push(newNote);
+    fs.writeFile('./db/db.json', JSON.stringify(sumOfNotes), function (err) {
+        if (err) throw err;
+    });
+
+    res.json(newNote);
 });
 
 // Starts the server to begin listening
