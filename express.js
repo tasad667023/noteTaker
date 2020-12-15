@@ -2,6 +2,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const db = require("./db/db.json");
 
 // Sets up the Express App
 const app = express();
@@ -27,23 +28,16 @@ app.get('/notes', (req, res) => {
 
 // GET method for the DB
 app.get('/api/notes', (req, res) => {
-    console.log(res.sendFile(path.join(__dirname, './db/db.json')))
-
     res.sendFile(path.join(__dirname, './db/db.json'));
-
 });
 
 // Create and save notes - takes in JSON input
 app.post('/api/notes', (req, res) => {
-
     const newNote = req.body;
-    //newNote.routeName = newNote.name.replace(/\s+/g, '').toLowerCase();
-    console.log(newNote);
-    sumOfNotes.push(newNote);
-    fs.writeFile('./db/db.json', JSON.stringify(sumOfNotes), function (err) {
+    db.push(newNote);
+    fs.writeFile('./db/db.json', JSON.stringify(db), function (err) {
         if (err) throw err;
     });
-
     res.json(newNote);
 });
 
